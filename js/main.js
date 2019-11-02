@@ -33,12 +33,13 @@ class AddKeyboard {
     createBlockOut = () => {
         this.elements.textOut = document.createElement('textarea');
         this.elements.textOut.className = 'text_out';
-        this. elements.textOut.setAttribute('id', 'text-out');
+        this.elements.textOut.setAttribute('id', 'text-out');
         return this;
     }
     createBlockKeyboard = () => {
         this.elements.keyboard = document.createElement('div');
         this.elements.keyboard.className = 'keyboard';
+        this.elements.keyboard.setAttribute('id', 'keyboard');
         return this;
     }
     createKeyboard = () => {
@@ -108,25 +109,50 @@ class ControlKeyboard {
                 }
             });
         }
+        this.printLettersMouse();
         return this
     }
     printLetters = (el, buttons) => {
         const outLetter = document.getElementById('text-out');
-        if(el.textContent.length === 1) outLetter.textContent = outLetter.textContent + el.textContent;
-        if(el.getAttribute('data-code') === 'Backspace') outLetter.textContent = (outLetter.textContent).slice(0, outLetter.textContent.length - 1);
-        if(el.getAttribute('data-code') === 'CapsLock') {
-            if(document.querySelector('.button[data-code=KeyA]').textContent === 'a') {
+        if (el.textContent.length === 1) outLetter.textContent = outLetter.textContent + el.textContent;
+        if (el.getAttribute('data-code') === 'Backspace') outLetter.textContent = (outLetter.textContent).slice(0, outLetter.textContent.length - 1);
+        if (el.getAttribute('data-code') === 'CapsLock') {
+            if (document.querySelector('.button[data-code=KeyA]').textContent === 'a') {
                 document.querySelector('.button[data-code=CapsLock]').classList.add('caps-lock-on');
-                buttons.forEach(function(el) {
-                    if(el.getAttribute('data-code').includes('Key')) el.textContent = el.textContent.toUpperCase();
+                buttons.forEach(function (el) {
+                    if (el.getAttribute('data-code').includes('Key')) el.textContent = el.textContent.toUpperCase();
                 })
-            }else {
+            } else {
                 document.querySelector('.button[data-code=CapsLock]').classList.remove('caps-lock-on');
-                buttons.forEach(function(el) {
-                    if(el.getAttribute('data-code').includes('Key')) el.textContent = el.textContent.toLowerCase();
+                buttons.forEach(function (el) {
+                    if (el.getAttribute('data-code').includes('Key')) el.textContent = el.textContent.toLowerCase();
                 })
-            } 
+            }
         }
+    }
+    printLettersMouse = () => {
+        const keyboard = document.getElementById('keyboard');
+        const outLetter = document.getElementById('text-out');
+        const buttons = document.querySelectorAll('.button');
+        keyboard.addEventListener('click', e => {
+            if (e.target.hasAttribute('data-code')) {
+                if (e.target.getAttribute('data-code').includes('Key')) outLetter.textContent = outLetter.textContent + e.target.textContent;
+                if (e.target.getAttribute('data-code') === 'Backspace') outLetter.textContent = (outLetter.textContent).slice(0, outLetter.textContent.length - 1);
+                if (e.target.getAttribute('data-code') === 'CapsLock') {
+                    if (document.querySelector('.button[data-code=KeyA]').textContent === 'a') {
+                        document.querySelector('.button[data-code=CapsLock]').classList.add('caps-lock-on');
+                        buttons.forEach(function (el) {
+                            if (el.getAttribute('data-code').includes('Key')) el.textContent = el.textContent.toUpperCase();
+                        })
+                    } else {
+                        document.querySelector('.button[data-code=CapsLock]').classList.remove('caps-lock-on');
+                        buttons.forEach(function (el) {
+                            if (el.getAttribute('data-code').includes('Key')) el.textContent = el.textContent.toLowerCase();
+                        })
+                    }
+                }
+            }
+        })
     }
 }
 const keyboardEnglish = new AddKeyboard(keyboardEn, eventCode);
