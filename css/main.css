@@ -21,6 +21,7 @@
   vertical-align: middle;
   margin: 5px;
   cursor: pointer;
+  transition: .5s;
 }
 .btn_backspace,
 .btn_tab,
@@ -55,11 +56,20 @@
 .btn_ctrl:first-child {
     width: calc(50px + 20px)
 }
+.btn_ {
+  width: 340px;
+  background: inherit !important;
+}
+
 .button:hover {
   border: 1px solid darkred;
   color: darkred;
 }
-.btn_ {
-  width: 340px;
-  background: inherit !important;
+.button_active {
+  background: #000;
+  color: white;
+}
+.caps-lock-on {
+  background: #000;
+  color: white;
 }
