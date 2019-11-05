@@ -1,7 +1,11 @@
-// 1 en
-// 2 ru
-// 3 en shift
-// 4 ru shift
+function stringValidate(str) {
+    const arr = ['Backspace', 'Tab', 'Delete', 'CapsLock', 'Enter', 'Left', 'Right'];
+    if (str === 'BracketLeft' || str === 'BracketRight') return true;
+    for (let i = 0; i < arr.length; i++) {
+        if (str.includes(arr[i])) return false;
+    }
+    return true;
+}
 const eventCode = [
     ["Backquote", "Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "Digit8", "Digit9", "Digit0", "Minus", "Equal", "Backspace"],
     ["Tab", "KeyQ", "KeyW", "KeyE", "KeyR", "KeyT", "KeyY", "KeyU", "KeyI", "KeyO", "KeyP", "BracketLeft", "BracketRight", "Backslash", "Delete"],
@@ -69,7 +73,7 @@ class AddKeyboard {
 }
 class ControlKeyboard {
     constructor(keyboardEn, keyboardRu) {
-        this.lang = 'en';
+        this.lang = localStorage.getItem('lang') || 'en';
         this.keyboardEn = keyboardEn;
         this.keyboardRu = keyboardRu;
     }
@@ -89,8 +93,16 @@ class ControlKeyboard {
         })
         document.addEventListener('keyup', (e) => {
             if (pressed.has('AltLeft') && pressed.has('ShiftLeft')) {
-                this.lang === 'ru' ? this.lang = 'en' : this.lang = 'ru';
+                if (this.lang === 'ru') {
+                    this.lang = 'en';
+                    localStorage.setItem('lang', 'en')
+                } else {
+                    this.lang = 'ru';
+                    localStorage.setItem('lang', 'ru')
+                }
+                let textOut = document.getElementById('text-out').textContent;
                 this.render().keyboardEventHandler();
+                document.getElementById('text-out').textContent = textOut;
             }
             pressed.delete(e.code);
         })
@@ -105,7 +117,7 @@ class ControlKeyboard {
                     this.printLetters(el, buttons);
                     setTimeout(function () {
                         el.classList.remove('button_active');
-                    }, 500)
+                    }, 300)
                 }
             });
         }
@@ -117,10 +129,12 @@ class ControlKeyboard {
         if (el.textContent.length === 1) outLetter.textContent = outLetter.textContent + el.textContent;
         if (el.getAttribute('data-code') === 'Backspace') outLetter.textContent = (outLetter.textContent).slice(0, outLetter.textContent.length - 1);
         if (el.getAttribute('data-code') === 'CapsLock') {
-            if (document.querySelector('.button[data-code=KeyA]').textContent === 'a') {
+            let buttonA = document.querySelector('.button[data-code=KeyA]').textContent;
+            if (buttonA === 'a' || buttonA === 'ф') {
                 document.querySelector('.button[data-code=CapsLock]').classList.add('caps-lock-on');
                 buttons.forEach(function (el) {
-                    if (el.getAttribute('data-code').includes('Key')) el.textContent = el.textContent.toUpperCase();
+                    //if (el.getAttribute('data-code').includes('Key')) el.textContent = el.textContent.toUpperCase();
+                    if (stringValidate(el.getAttribute('data-code'))) el.textContent = el.textContent.toUpperCase();
                 })
             } else {
                 document.querySelector('.button[data-code=CapsLock]').classList.remove('caps-lock-on');
@@ -135,11 +149,13 @@ class ControlKeyboard {
         const outLetter = document.getElementById('text-out');
         const buttons = document.querySelectorAll('.button');
         keyboard.addEventListener('click', e => {
+            let dataAttribute = e.target.getAttribute('data-code');
             if (e.target.hasAttribute('data-code')) {
-                if (e.target.getAttribute('data-code').includes('Key')) outLetter.textContent = outLetter.textContent + e.target.textContent;
-                if (e.target.getAttribute('data-code') === 'Backspace') outLetter.textContent = (outLetter.textContent).slice(0, outLetter.textContent.length - 1);
-                if (e.target.getAttribute('data-code') === 'CapsLock') {
-                    if (document.querySelector('.button[data-code=KeyA]').textContent === 'a') {
+                if (dataAttribute.includes('Key')) outLetter.textContent = outLetter.textContent + e.target.textContent;
+                if (dataAttribute === 'Backspace') outLetter.textContent = (outLetter.textContent).slice(0, outLetter.textContent.length - 1);
+                if (dataAttribute === 'CapsLock') {
+                    let buttonA = document.querySelector('.button[data-code=KeyA]').textContent;
+                    if (buttonA === 'a' || buttonA === 'ф') {
                         document.querySelector('.button[data-code=CapsLock]').classList.add('caps-lock-on');
                         buttons.forEach(function (el) {
                             if (el.getAttribute('data-code').includes('Key')) el.textContent = el.textContent.toUpperCase();
